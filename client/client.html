@@ -1,17 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>Our simple HTTP server</title>
-  <link rel="stylesheet" type="text/css" href="/style.css">
-  
-  <script>
 
-  </script>
+<head>
+    <title>Our simple HTTP server</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+
+    <script>
+        function fetchData(url, options) {
+            fetch(url, options) // get a Star Wars character
+                .then(response => {
+                    return response.json();
+                })
+                .then(json => {
+                    document.querySelector('#content').innerHTML = `<h1>${json.id}</h1><h2>${json.message}</h2>`;
+
+                    if (options.headers.Accept === 'application/json') {
+                        console.log(json);
+                        return;
+                    }
+                    if (json.id)
+                        console.log(`<response><message>${json.message}</message><id>${json.id}</id></response>`);
+                    else
+                        console.log(`<response><message>${json.message}</message></response>`);
+
+                }).catch(error => {
+                    //error
+                    console.log(error);
+                    return;
+                });
+
+        }
+
+        window.onload = () => {
+            document.querySelector('#send').onclick = (e) => {
+                const options = {
+                    method: "GET",
+                    headers: {
+                        'Accept': document.querySelector("#type").value
+                    },
+                }
+                fetchData(document.querySelector("#page").value, options);
+            }
+        }
+    </script>
 </head>
+
 <body>
-  <section id="top">
-    <h3>Status Code Tests</h3>
-    <select id="page">
+    <section id="top">
+        <h3>Status Code Tests</h3>
+        <select id="page">
       <option value="/success">Success</option>
       <option value="/badRequest">Bad Request</option>
       <option value="/unauthorized">Unauthorized</option>
@@ -20,13 +57,14 @@
       <option value="/notImplemented">Not Implemented</option>
       <option value="/notFound">Not Found</option>
     </select>
-    <select id="type">
+        <select id="type">
       <option value="application/json">JSON</option>
       <option value="text/xml">XML</option>
     </select>
-    <button id="send">Send</button>
-  </section>
-  <section id="content">
-  </section>
+        <button id="send">Send</button>
+    </section>
+    <section id="content">
+    </section>
 </body>
+
 </html>
